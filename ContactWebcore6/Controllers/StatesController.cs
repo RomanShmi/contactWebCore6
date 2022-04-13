@@ -10,18 +10,24 @@ using ContactWebModels;
 using MyContactManagerData;
 using Microsoft.Extensions.Caching.Memory;
 using ContactWebcore6.Models;
+using MyContactManagerServices;
+using Microsoft.AspNetCore.Authorization;
+using ContactWebcore6.Data;
 
 namespace ContactWebcore6.Controllers
 {
+    [Authorize(Roles = UserRoleService.ADMIN_ROLE_NAME)]
     public class StatesController : Controller
     {
-        private readonly MyContactManagerDbContext _context;
+
+        //private readonly MyContactManagerDbContext _context;
+        private readonly IStateService _statesService;
         private IMemoryCache _cache;
 
-        public StatesController(MyContactManagerDbContext context, IMemoryCache cache)
+        public StatesController(IStateService statesService, IMemoryCache cache)
 
         {
-            _context = context;
+            _statesService = statesService;
             _cache= cache; 
         }
 
@@ -31,7 +37,7 @@ namespace ContactWebcore6.Controllers
             var allStates = new List<State>();
             if(!_cache.TryGetValue(ContactCacheContacts.ALL_STATES, out allStates))
             {
-               var allStatesData= await _context.State.ToListAsync();
+               var allStatesData= await _statesService.GetAllAsync() as List<State>;
 
                 _cache.Set(ContactCacheContacts.ALL_STATES, allStatesData, TimeSpan.FromDays(1) );
                 return View(allStatesData);
@@ -39,7 +45,7 @@ namespace ContactWebcore6.Controllers
             }
 
             
-            return View(await _context.State.ToListAsync());
+            return View(allStates);
         }
 
         // GET: States/Details/5
@@ -50,8 +56,10 @@ namespace ContactWebcore6.Controllers
                 return NotFound();
             }
 
-            var state = await _context.State
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //var state = await _context.State.FirstOrDefaultAsync(m => m.Id == id);
+
+            var state = await _statesService.GetAsync((int)id);
+            
             if (state == null)
             {
                 return NotFound();
@@ -61,11 +69,12 @@ namespace ContactWebcore6.Controllers
         }
 
         // GET: States/Create
+       
         public IActionResult Create()
         {
             return View();
         }
-
+       
         // POST: States/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -75,8 +84,13 @@ namespace ContactWebcore6.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(state);
-                await _context.SaveChangesAsync();
+                // _context.Add(state);
+                //  await _context.SaveChangesAsync();
+              await _statesService.AddOrUpdateAsync(state);
+
+                
+                
+                
                 _cache.Remove(ContactCacheContacts.ALL_STATES);
 
 
@@ -93,8 +107,8 @@ namespace ContactWebcore6.Controllers
                 return NotFound();
             }
 
-            var state = await _context.State.FindAsync(id);
-
+            //  var state = await _context.State.FindAsync(id);
+            var state = await _statesService.GetAsync((int)id);
             if (state == null)
             {
                 return NotFound();
@@ -118,9 +132,10 @@ namespace ContactWebcore6.Controllers
             {
                 try
                 {
-                    _context.Update(state);
-                   
-                    await _context.SaveChangesAsync();
+                    //     _context.Update(state);  
+                    //     await _context.SaveChangesAsync();
+
+                    await _statesService.AddOrUpdateAsync(state);
                     _cache.Remove(ContactCacheContacts.ALL_STATES);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -147,8 +162,11 @@ namespace ContactWebcore6.Controllers
                 return NotFound();
             }
 
-            var state = await _context.State
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //  var state = await _context.State
+            //    .FirstOrDefaultAsync(m => m.Id == id);
+
+            var state = await _statesService.GetAsync((int)id);
+
             if (state == null)
             {
                 return NotFound();
@@ -162,16 +180,19 @@ namespace ContactWebcore6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var state = await _context.State.FindAsync(id);
-            _context.State.Remove(state);
-            await _context.SaveChangesAsync();
+
+          await _statesService.DeleteAsync(id);
+            // var state = await _context.State.FindAsync(id);
+            // _context.State.Remove(state);
+           // await _context.SaveChangesAsync();
             _cache.Remove(ContactCacheContacts.ALL_STATES);
             return RedirectToAction(nameof(Index));
         }
 
         private bool StateExists(int id)
         {
-            return _context.State.Any(e => e.Id == id);
+           return Task.Run(()=> _statesService.ExistsAsync(id)).Result;
+            //return _context.State.Any(e => e.Id == id);
         }
     }
 }

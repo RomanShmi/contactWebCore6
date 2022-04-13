@@ -18,10 +18,12 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\lib\datatables\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyContactManagerData\MyContactManagerData.csproj" />
+    <ProjectReference Include="..\MyContactManagerServices\MyContactManagerServices.csproj" />
+    <ProjectReference Include="..\MyContactManagersRepositories\MyContactManagersRepositories.csproj" />
   </ItemGroup>
 
 </Project>

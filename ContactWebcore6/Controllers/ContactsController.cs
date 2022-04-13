@@ -1,39 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContactWebModels;
-using MyContactManagerData;
-using ContactWebcore6.Models;
 using Microsoft.Extensions.Caching.Memory;
+using MyContactManagerServices;
+using ContactWebcore6.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
-namespace ContactWebcore6.Controllers
+namespace ContactWebEFCore6.Controllers
 {
+   [Authorize]
     public class ContactsController : Controller
     {
-        private readonly MyContactManagerDbContext _context;
-        private static List<State> _allStates;
+        private readonly IContactService _contactsService;
+        private readonly IStateService _statesService;
+        private static IList<State> _allStates;
         private static SelectList _statesData;
         private IMemoryCache _cache;
 
-        public ContactsController(MyContactManagerDbContext context, IMemoryCache cache)
+        public ContactsController(IContactService contactsService, IStateService statesService, IMemoryCache cache)
         {
-            _context = context;
+            _contactsService = contactsService;
+            _statesService = statesService;
             _cache = cache;
-            SetAllstatesCachingData();
-            _statesData = new SelectList(_context.State,"Id","Abbreviation");
-             
+            SetAllStatesCachingData();
+            _statesData = new SelectList(_allStates, "Id", "Abbreviation");
         }
 
-        private void SetAllstatesCachingData()
+        private void SetAllStatesCachingData()
         {
             var allStates = new List<State>();
             if (!_cache.TryGetValue(ContactCacheContacts.ALL_STATES, out allStates))
             {
-                var allStatesData = Task.Run(()=> _context.State.ToListAsync()).Result;
+                var allStatesData = Task.Run(() => _statesService.GetAllAsync()).Result;
 
                 _cache.Set(ContactCacheContacts.ALL_STATES, allStatesData, TimeSpan.FromDays(1));
-                allStates= _cache.Get(ContactCacheContacts.ALL_STATES) as List<State>;
-
+                allStates = _cache.Get(ContactCacheContacts.ALL_STATES) as List<State>;
             }
             _allStates = allStates;
         }
@@ -44,31 +48,32 @@ namespace ContactWebcore6.Controllers
             var state = _allStates.SingleOrDefault(x => x.Id == contact.StateId);
             contact.State = state;
             TryValidateModel(contact);
-
         }
-
-
-
 
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            var myContact = _context.Contacts.Include(c => c.State);
-            return View(await myContact.ToListAsync());
+            var userId = await GetCurrentUserID();
+            var contacts = await _contactsService.GetAllAsync(userId);
+            return View(contacts);
         }
 
+        protected async Task<string> GetCurrentUserID()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return userId;
+        }
         // GET: Contacts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var userId = await GetCurrentUserID();
+            var contact = await _contactsService.GetAsync((int)id, userId);
+
             if (id == null)
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts
-                .Include(c => c.State)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (contact == null)
+              if (contact == null)
             {
                 return NotFound();
             }
@@ -90,13 +95,13 @@ namespace ContactWebcore6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,PhonePrimary,PhoneSecondary,Birthday,StreetAddress1,StreetAddress2,City,StateId,Zip,UserId")] Contact contact)
         {
-            UpdateStateAndResetModelState(contact);
+            var userId = await GetCurrentUserID();
+            contact.UserId = userId;
+
+            await UpdateStateAndResetModelState(contact);
             if (ModelState.IsValid)
             {
-              var state = await _context.State.SingleOrDefaultAsync(x=> x.Id == contact.StateId);
-                contact.State=state;
-                await _context.Contacts.AddAsync(contact);
-                await _context.SaveChangesAsync();
+                  await _contactsService.AddOrUpdateAsync(contact, userId);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StateId"] = _statesData;
@@ -110,13 +115,13 @@ namespace ContactWebcore6.Controllers
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts.FindAsync(id);
+            var userId = await GetCurrentUserID();
+            var contact = await _contactsService.GetAsync((int)id, userId);
             if (contact == null)
             {
                 return NotFound();
             }
-            ViewData["StateId"] = _statesData; 
+            ViewData["StateId"] = _statesData;
             return View(contact);
         }
 
@@ -131,19 +136,20 @@ namespace ContactWebcore6.Controllers
             {
                 return NotFound();
             }
+            var userId = await GetCurrentUserID();
+            contact.UserId = userId;
 
-            UpdateStateAndResetModelState(contact);
-
+            await UpdateStateAndResetModelState(contact);
             if (ModelState.IsValid)
             {
+                
                 try
                 {
-                    _context.Contacts.Update(contact);
-                    await _context.SaveChangesAsync();
+                    await _contactsService.AddOrUpdateAsync(contact, userId);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContactExists(contact.Id))
+                    if (!await ContactExists(contact.Id))
                     {
                         return NotFound();
                     }
@@ -165,10 +171,9 @@ namespace ContactWebcore6.Controllers
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts
-                .Include(c => c.State)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userId = await GetCurrentUserID();
+            
+            var contact = await _contactsService.GetAsync((int)id, userId);
             if (contact == null)
             {
                 return NotFound();
@@ -182,15 +187,15 @@ namespace ContactWebcore6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
-            _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
+            var userId = await GetCurrentUserID();
+            await _contactsService.DeleteAsync(id, userId);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ContactExists(int id)
+        private async Task<bool> ContactExists(int id)
         {
-            return _context.Contacts.Any(e => e.Id == id);
+            var userId = await GetCurrentUserID();
+            return await _contactsService.ExistsAsync(id, userId);
         }
     }
 }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Contact Web Manager</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="css/datatables.min.css" asp-append-version="true" />
+
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Contact Web Manager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark " asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext?.RouteData?.Values[" Action "]?.ToString() == "Privacy "
+                                                ? "active-link " : " ")" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext?.RouteData?.Values[" Controller "]?.ToString() == "Contacts "
+                                                ? "active-link " : " ")" asp-area="" asp-controller="Contacts" asp-action="Index">Contacts</a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext?.RouteData?.Values[" Controller "]?.ToString() == "States "
+                                                ? "active-link " : " ")" asp-area="" asp-controller="States" asp-action="Index">States</a>
+                        </li>
+
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ContactModal" data-bs-whatever="ggggg1@mdo--------------">Open modal for ggggg2@mdo</button>
+
+
+            <div class="modal fade" id="ContactModal" tabindex="-1" aria-labelledby="ContactModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+
+
+                            <h5 class="modal-title" id="ContactModalLabel">New message</h5>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - ContactWebEFCore6 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/bootstrap.bundle.min.js"></script>
+    <script src="lib/datatables.min.js"></script>
+    <script src="js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        var ContactModal = document.getElementById('ContactModal')
+        ContactModal.addEventListener('show.bs.modal', function(event) {
+
+            var button = event.relatedTarget
+
+            var recipient = button.getAttribute('data-bs-whatever')
+
+            var modalTitle = ContactModal.querySelector('.modal-title')
+
+            modalTitle.textContent = recipient
+
+        })
+    </script>
+
+</body>
+
+</html>

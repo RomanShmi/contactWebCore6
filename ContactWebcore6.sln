@@ -5,9 +5,17 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactWebcore6", "ContactWebcore6\ContactWebcore6.csproj", "{227043B0-E5B2-49D9-BF2E-15E4EA3B8679}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactWebModels", "ContactWebModels\ContactWebModels.csproj", "{408B36CB-C19E-4D35-896D-0E4C1BEF2C6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactWebModels", "ContactWebModels\ContactWebModels.csproj", "{408B36CB-C19E-4D35-896D-0E4C1BEF2C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyContactManagerData", "MyContactManagerData\MyContactManagerData.csproj", "{3332AB09-11E5-49C1-AE6F-4855F82E1AAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyContactManagerData", "MyContactManagerData\MyContactManagerData.csproj", "{3332AB09-11E5-49C1-AE6F-4855F82E1AAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyContactManagersRepositories", "MyContactManagersRepositories\MyContactManagersRepositories.csproj", "{1BC14271-7398-4784-BACE-BE346F3EEA32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyContactManagerServices", "MyContactManagerServices\MyContactManagerServices.csproj", "{2BD6AD03-897D-4026-BFAA-5EE2499DA323}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyContactManagerUnitTest", "MyContactManagerUnitTest\MyContactManagerUnitTest.csproj", "{9E6B245E-71E6-41B9-AC20-7A4599C69004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyContactManagerIntegrationTest", "MyContactManagerIntegrationTest\MyContactManagerIntegrationTest.csproj", "{0488B87A-C87F-4074-925E-F9DE2FEA0528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +35,22 @@ Global
 		{3332AB09-11E5-49C1-AE6F-4855F82E1AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3332AB09-11E5-49C1-AE6F-4855F82E1AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3332AB09-11E5-49C1-AE6F-4855F82E1AAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BC14271-7398-4784-BACE-BE346F3EEA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BC14271-7398-4784-BACE-BE346F3EEA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BC14271-7398-4784-BACE-BE346F3EEA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BC14271-7398-4784-BACE-BE346F3EEA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BD6AD03-897D-4026-BFAA-5EE2499DA323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BD6AD03-897D-4026-BFAA-5EE2499DA323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BD6AD03-897D-4026-BFAA-5EE2499DA323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BD6AD03-897D-4026-BFAA-5EE2499DA323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E6B245E-71E6-41B9-AC20-7A4599C69004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6B245E-71E6-41B9-AC20-7A4599C69004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6B245E-71E6-41B9-AC20-7A4599C69004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6B245E-71E6-41B9-AC20-7A4599C69004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0488B87A-C87F-4074-925E-F9DE2FEA0528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0488B87A-C87F-4074-925E-F9DE2FEA0528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0488B87A-C87F-4074-925E-F9DE2FEA0528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0488B87A-C87F-4074-925E-F9DE2FEA0528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
