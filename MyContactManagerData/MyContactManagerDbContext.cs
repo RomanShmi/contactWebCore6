@@ -19,8 +19,9 @@ namespace MyContactManagerData
         
         }
 
+        // public MyContactManagerDbContext(DbContextOptions options)
+        // : base(options)
         public MyContactManagerDbContext(DbContextOptions options)
-            : base(options)
         {
 //           //empty
         }
